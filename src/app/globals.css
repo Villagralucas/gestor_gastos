@@ -1,0 +1,267 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-income: var(--income);
+  --color-expense: var(--expense);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* Outfit, cargada en layout.js con next/font. Al pisar --font-sans se
+     aplica a toda la app, porque el @layer base de mas abajo hace
+     `html { @apply font-sans }`. El fallback cubre el instante previo a que
+     la fuente termine de cargar. */
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* TEMA CLARO. El oscuro esta abajo, en `.dark`, y es el que arranca por
+     defecto. Cada token tiene que existir en los dos bloques: si falta en uno,
+     ese tema hereda el valor del otro y queda ilegible. */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* El acento de la app: naranja en claro, azul en oscuro (ver `.dark`).
+     Son los mismos tonos que usa el grafico, para que la app tenga un solo
+     color por tema en vez de uno para los botones y otro para los datos. */
+  --primary: oklch(0.52 0.15 50);
+  --primary-foreground: oklch(0.99 0.01 50);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* Azul para lo que entra, naranja para lo que sale. Se eligio este par en
+     lugar de verde/rojo porque se distingue tambien con daltonismo rojo-verde,
+     que afecta a cerca del 8% de los varones. Sobre fondo claro van mas
+     oscuros que en el tema oscuro, si no no se leen como texto. */
+  --income: oklch(0.5 0.19 250);
+  --expense: oklch(0.52 0.15 50);
+
+  --chart-1: oklch(0.5 0.19 250);
+  --chart-2: oklch(0.52 0.15 50);
+  --chart-3: oklch(0.55 0.14 300);
+  --chart-4: oklch(0.6 0.12 190);
+  --chart-5: oklch(0.55 0.1 90);
+
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.52 0.15 50);
+  --sidebar-primary-foreground: oklch(0.99 0.01 50);
+  --sidebar-accent: oklch(0.94 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.52 0.15 50);
+  --grid-line: oklch(0 0 0 / 6%);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.7 0.16 250);
+  --primary-foreground: oklch(0.18 0.04 250);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --income: oklch(0.7 0.16 250);
+  --expense: oklch(0.76 0.15 60);
+
+  --chart-1: oklch(0.7 0.16 250);
+  --chart-2: oklch(0.76 0.15 60);
+  --chart-3: oklch(0.68 0.16 300);
+  --chart-4: oklch(0.72 0.12 190);
+  --chart-5: oklch(0.75 0.12 90);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.7 0.16 250);
+  --sidebar-primary-foreground: oklch(0.18 0.04 250);
+  --sidebar-accent: oklch(0.28 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.7 0.16 250);
+  --grid-line: oklch(1 0 0 / 4%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@keyframes success-pulse {
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.77 0.16 170 / 35%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 18px oklch(0.77 0.16 170 / 0%);
+  }
+}
+
+@keyframes success-check {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.success-pulse {
+  animation: success-pulse 900ms ease-out 1;
+}
+
+.success-check {
+  animation: success-check 260ms ease-out 120ms both;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(4%, 6%, 0) scale(1.08);
+  }
+
+  100% {
+    transform: translate3d(-3%, -4%, 0) scale(0.96);
+  }
+}
+
+.aurora-blob {
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.aurora-blob-slow {
+  animation-duration: 34s;
+  animation-delay: -8s;
+}
+
+.aurora-blob-slower {
+  animation-duration: 42s;
+  animation-delay: -16s;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 75%);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
+}
+
+/*
+ * Snap por seccion en la landing: al scrollear, la pagina se acomoda sola al
+ * principio de cada seccion en vez de dejarte a mitad de camino.
+ *
+ * Se activa solo si en la pagina hay un contenedor con `data-snap="sections"`,
+ * asi el dashboard scrollea normal.
+ *
+ * Y solo de tablet para arriba: en pantallas chicas el contenido de una
+ * seccion pasa el alto de la ventana, y con snap obligatorio parte de ese
+ * contenido quedaria imposible de alcanzar.
+ */
+@media (min-width: 768px) {
+  html:has([data-snap="sections"]) {
+    scroll-snap-type: y mandatory;
+  }
+
+  [data-snap="sections"] > main > section,
+  [data-snap="sections"] > footer {
+    scroll-snap-align: start;
+    /* Sin esto, un scroll fuerte se saltea secciones enteras. */
+    scroll-snap-stop: always;
+  }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  html:has([data-snap="sections"]) {
+    scroll-behavior: smooth;
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+build/
+
+.env
+.env.local
+.env*.local
+
+*.log
+.next-dev.log
+.next-dev.err.log
+
+.DS_Store
