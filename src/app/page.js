@@ -12,6 +12,7 @@ import {
   Tags,
   WalletCards,
 } from "lucide-react";
+import { HeroPreview } from "@/components/hero-preview";
 import { SiteBackground } from "@/components/site-background";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -139,7 +140,7 @@ export default function HomePage() {
 
       <main>
         <section className="relative flex min-h-screen items-center overflow-hidden border-b border-border/60">
-          <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-4 py-24 sm:px-6">
+          <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div className="max-w-3xl">
               <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
                 <Lock className="size-3.5 text-primary" aria-hidden="true" />
@@ -180,6 +181,9 @@ export default function HomePage() {
                 ))}
               </ul>
             </div>
+
+            {/* En pantallas chicas el hero ya es alto de mas sin la miniatura. */}
+            <HeroPreview className="hidden lg:block" />
           </div>
 
           {/* Con snap obligatorio y secciones de pantalla completa no hay
