@@ -4,6 +4,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   Check,
+  ChevronDown,
   Download,
   HardDriveDownload,
   Lock,
@@ -11,6 +12,7 @@ import {
   Tags,
   WalletCards,
 } from "lucide-react";
+import { HeroPreview } from "@/components/hero-preview";
 import { SiteBackground } from "@/components/site-background";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -138,8 +140,13 @@ export default function HomePage() {
 
       <main>
         <section className="relative flex min-h-screen items-center overflow-hidden border-b border-border/60">
-          <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-4 py-24 sm:px-6">
+          <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div className="max-w-3xl">
+              <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+                <Lock className="size-3.5 text-primary" aria-hidden="true" />
+                Sin cuentas · Tus datos quedan en tu navegador
+              </p>
+
               <h1 className="text-5xl font-bold leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl">
                 Tus gastos, tu presupuesto y tu ahorro en{" "}
                 <span className="text-primary">un solo tablero</span>.
@@ -174,7 +181,24 @@ export default function HomePage() {
                 ))}
               </ul>
             </div>
+
+            {/* En pantallas chicas el hero ya es alto de mas sin la miniatura. */}
+            <HeroPreview className="hidden lg:block" />
           </div>
+
+          {/* Con snap obligatorio y secciones de pantalla completa no hay
+              ninguna pista de que abajo sigue la pagina. */}
+          <Link
+            aria-label="Ir a la sección de funciones"
+            className="absolute inset-x-0 bottom-8 mx-auto flex w-fit flex-col items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            href="#funciones"
+          >
+            Seguí bajando
+            <ChevronDown
+              className="size-4 animate-bounce motion-reduce:animate-none"
+              aria-hidden="true"
+            />
+          </Link>
         </section>
 
         <section
