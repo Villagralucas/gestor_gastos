@@ -77,7 +77,7 @@ export function SettingsDrawer({ onOpenChange, onSave, open, settings }) {
               id="presupuesto"
               type="number"
               min="0"
-              step="1000"
+              step="any"
               value={draft.monthlyBudget}
               onChange={(event) =>
                 setDraft((current) => ({
@@ -113,7 +113,7 @@ export function SettingsDrawer({ onOpenChange, onSave, open, settings }) {
               id="meta"
               type="number"
               min="0"
-              step="1000"
+              step="any"
               value={draft.savingsGoal}
               onChange={(event) =>
                 setDraft((current) => ({
@@ -134,7 +134,7 @@ export function SettingsDrawer({ onOpenChange, onSave, open, settings }) {
               id="ahorro"
               type="number"
               min="0"
-              step="1000"
+              step="any"
               value={draft.savedAmount}
               onChange={(event) =>
                 setDraft((current) => ({

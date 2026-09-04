@@ -10,16 +10,31 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SettingsDrawer } from "@/components/settings-drawer";
 import { SiteHeader } from "@/components/site-header";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useToast } from "@/components/ui/toast";
 import { formatCurrency } from "@/lib/formatters";
 import {
+  addTransaction as dbAddTransaction,
   downloadData,
   getDataSnapshot,
   getServerDataSnapshot,
+  initData,
   readImportedFile,
-  setData,
+  removeTransaction as dbRemoveTransaction,
+  replaceAll as dbReplaceAll,
+  saveSettings as dbSaveSettings,
   subscribeToData,
+  updateTransaction as dbUpdateTransaction,
 } from "@/lib/storage";
 import {
   dateFromInput,
@@ -51,6 +66,8 @@ export default function Page() {
   const [selectedDate, setSelectedDate] = React.useState(getCurrentDate);
   const [isAdding, setIsAdding] = React.useState(false);
   const [isEditingSettings, setIsEditingSettings] = React.useState(false);
+  // El movimiento que espera confirmación para borrarse, o null.
+  const [pendingDelete, setPendingDelete] = React.useState(null);
 
   const { settings, transactions } = data;
 
@@ -74,56 +91,79 @@ export default function Page() {
     [previousTransactions],
   );
 
-  const addTransaction = React.useCallback((values) => {
-    setData((current) => ({
-      ...current,
-      transactions: [
-        { id: crypto.randomUUID(), ...values },
-        ...current.transactions,
-      ],
-    }));
-  }, []);
+  // La primera lectura de la base. `initData` se cuida sola de salir una vez.
+  React.useEffect(() => {
+    initData().catch((error) => {
+      toast({
+        variant: "error",
+        title: "No se pudieron cargar los datos",
+        description: error.message,
+      });
+    });
+  }, [toast]);
 
-  const updateTransaction = React.useCallback((id, values) => {
-    setData((current) => ({
-      ...current,
-      transactions: current.transactions.map((transaction) =>
-        transaction.id === id ? { ...transaction, ...values } : transaction,
-      ),
-    }));
-  }, []);
+  /**
+   * Las escrituras son optimistas: la pantalla ya se actualizó cuando esto
+   * espera, y si la base rechaza el cambio se revierte sola. Acá solo queda
+   * contar qué pasó.
+   */
+  const notifyFailure = React.useCallback(
+    (title, error) => {
+      toast({ variant: "error", title, description: error.message });
+    },
+    [toast],
+  );
 
-  const removeTransaction = React.useCallback(
-    (transaction) => {
-      const confirmed = window.confirm(
-        `Eliminar "${transaction.title}" por ${formatCurrency(transaction.amount)}?`,
-      );
-
-      if (!confirmed) {
-        return;
+  const addTransaction = React.useCallback(
+    async (values) => {
+      try {
+        await dbAddTransaction(values);
+      } catch (error) {
+        notifyFailure("No se pudo guardar el movimiento", error);
       }
+    },
+    [notifyFailure],
+  );
 
-      setData((current) => ({
-        ...current,
-        transactions: current.transactions.filter(
-          (item) => item.id !== transaction.id,
-        ),
-      }));
+  const updateTransaction = React.useCallback(
+    async (id, values) => {
+      try {
+        await dbUpdateTransaction(id, values);
+      } catch (error) {
+        notifyFailure("No se pudo editar el movimiento", error);
+      }
+    },
+    [notifyFailure],
+  );
+
+  const confirmDelete = React.useCallback(async () => {
+    const transaction = pendingDelete;
+
+    setPendingDelete(null);
+
+    if (!transaction) {
+      return;
+    }
+
+    try {
+      await dbRemoveTransaction(transaction.id);
 
       toast({
         variant: "success",
         title: "Movimiento eliminado",
         description: transaction.title,
       });
-    },
-    [toast],
-  );
+    } catch (error) {
+      notifyFailure("No se pudo eliminar el movimiento", error);
+    }
+  }, [notifyFailure, pendingDelete, toast]);
 
-  function saveSettings(patch) {
-    setData((current) => ({
-      ...current,
-      settings: { ...current.settings, ...patch },
-    }));
+  async function saveSettings(patch) {
+    try {
+      await dbSaveSettings(patch);
+    } catch (error) {
+      notifyFailure("No se pudieron guardar los ajustes", error);
+    }
   }
 
   function exportData() {
@@ -140,7 +180,7 @@ export default function Page() {
     try {
       const imported = await readImportedFile(file);
 
-      setData(imported);
+      await dbReplaceAll(imported);
 
       toast({
         variant: "success",
@@ -229,7 +269,7 @@ export default function Page() {
                 <DataTable
                   data={monthTransactions}
                   onCreate={() => setIsAdding(true)}
-                  onDelete={removeTransaction}
+                  onDelete={setPendingDelete}
                   onUpdate={updateTransaction}
                 />
               </div>
@@ -249,6 +289,35 @@ export default function Page() {
         open={isEditingSettings}
         settings={settings}
       />
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingDelete(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar este movimiento?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDelete
+                ? `Vas a borrar "${pendingDelete.title}" por ${formatCurrency(pendingDelete.amount)}. No se puede deshacer.`
+                : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              onClick={confirmDelete}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 }

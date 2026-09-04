@@ -169,7 +169,7 @@ export default function HomePage() {
                 </Button>
               </div>
 
-              <ul className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+              <ul className="mt-12 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
                 {highlights.map((item) => (
                   <li className="flex items-center gap-2" key={item}>
                     <Check
